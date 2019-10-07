@@ -1,6 +1,6 @@
 /* 
 
- Copyright 2018 Jethro Kwon (hanlareum@gmail.com), All Rights Reserved.
+ Copyright 2018-2019 Jethro Kwon (hanlareum@gmail.com), All Rights Reserved.
 
 */
 
@@ -8,11 +8,12 @@
 #include <sstream>
 #include <algorithm>
 
+#include <unistd.h>
 #include <string.h>
 #include <libgen.h>
 
 #include "Util.h"
-#include "version.h"
+#include "Version.h"
 
 using namespace std;
 
@@ -58,8 +59,9 @@ bool startswith(std::string a, std::string b) {
 	return (strncmp(a.c_str(), b.c_str(), b.length()) == 0) ? true : false;
 }
 
-void intro(std::string pname) {
-	prompt("%s%s %s (v%d, %s)%s\n", jethro::color::White.c_str(), basename(pname.c_str()), VERSION, AUTHOR, EMAIL, jethro::color::Reset.c_str());
+void intro(const char* pname) {
+	prompt("%s%s v%.1f (%s, %s)%s\n", jethro::color::White.c_str(), basename(pname), VERSION, AUTHOR, EMAIL, jethro::color::Reset.c_str());
+	usleep(100 * 1000);
 }
 
 } /*jethro*/

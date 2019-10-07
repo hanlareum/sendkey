@@ -1,8 +1,9 @@
 /* 
 
- Copyright 2018 Jethro Kwon (hanlareum@gmail.com), All Rights Reserved.
+ Copyright 2018-2019 Jethro Kwon (hanlareum@gmail.com), All Rights Reserved.
 
 */
+#include <unistd.h>
 
 #include "Util.h"
 #include "Console.h"
@@ -43,6 +44,8 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 #endif
+
+	usleep(100 * 1000);
 
 	std::string promptHeader = "";
 	promptHeader += jethro::color::LightCyan;

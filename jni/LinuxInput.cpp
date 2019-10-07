@@ -1,6 +1,6 @@
 /* 
 
- Copyright 2018 Jethro Kwon (hanlareum@gmail.com), All Rights Reserved.
+ Copyright 2018-2019 Jethro Kwon (hanlareum@gmail.com), All Rights Reserved.
 
 */
 
@@ -65,17 +65,24 @@ LinuxInput::~LinuxInput() {
 #endif
 }
 
-void LinuxInput::emitKey(int key) {
-	emit(EV_KEY, key, 1);
-	emit(EV_SYN, SYN_REPORT, 0);
-	emit(EV_KEY, key, 0);
+void LinuxInput::emitKey(int key, int type) {
+	emit(EV_KEY, key, type);
 	emit(EV_SYN, SYN_REPORT, 0);
 }
 
 void LinuxInput::emitKey(std::string &name) {
-	long code = m_db->findByName(name);
-	if (code >= 0) {
-		emitKey(code);
+	long key = m_db->findByName(name);
+	if (key >= 0) {
+		emitKey(key, 1);
+		emitKey(key, 0);
+	}
+}
+
+void LinuxInput::emitKey(std::string &name, std::string &code) {
+	int type = std::atoi(code.c_str());
+	long key = m_db->findByName(name);
+	if (key >= 0) {
+		emitKey(key, type);
 	}
 }
 

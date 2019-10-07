@@ -1,6 +1,6 @@
 /* 
 
- Copyright 2018 Jethro Kwon (hanlareum@gmail.com), All Rights Reserved.
+ Copyright 2018-2019 Jethro Kwon (hanlareum@gmail.com), All Rights Reserved.
 
 */
 
@@ -56,7 +56,11 @@ void LinuxInputWriter::mainloop() {
 		std::tie(keyName, keyCode) = pop();
 		lock.unlock();
 
-		m_device->emitKey(keyName);
+		if (keyCode == "") {
+			m_device->emitKey(keyName);
+		} else {
+			m_device->emitKey(keyName, keyCode);
+		}
 	}
 
 	m_running = false;
@@ -64,6 +68,10 @@ void LinuxInputWriter::mainloop() {
 
 void LinuxInputWriter::exec(std::string name) {
 	exec(std::pair<std::string, std::string>(name, ""));
+}
+
+void LinuxInputWriter::exec(std::string name, std::string code) {
+	exec(std::pair<std::string, std::string>(name, code));
 }
 
 void LinuxInputWriter::exec(std::pair<std::string, std::string> key) {

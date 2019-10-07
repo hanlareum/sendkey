@@ -1,6 +1,6 @@
 /* 
 
- Copyright 2018 Jethro Kwon (hanlareum@gmail.com), All Rights Reserved.
+ Copyright 2018-2019 Jethro Kwon (hanlareum@gmail.com), All Rights Reserved.
 
 */
 
@@ -26,6 +26,7 @@ public:
 	virtual ~LinuxInputWriter();
 
 	void exec(std::string name);
+	void exec(std::string name, std::string code);
 	void exec(std::pair<std::string, std::string> key);
 
 private:

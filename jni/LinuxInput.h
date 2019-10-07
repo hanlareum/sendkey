@@ -1,6 +1,6 @@
 /* 
 
- Copyright 2018 Jethro Kwon (hanlareum@gmail.com), All Rights Reserved.
+ Copyright 2018-2019 Jethro Kwon (hanlareum@gmail.com), All Rights Reserved.
 
 */
 
@@ -24,8 +24,9 @@ public:
 
 	virtual ~LinuxInput();
 	
-	void emitKey(int key);
+	void emitKey(int key, int type);
 	void emitKey(std::string &name);
+	void emitKey(std::string &name, std::string &code);
 
 private:
 	LinuxInput(std::string name, std::string path, std::shared_ptr<Database> db);

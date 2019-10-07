@@ -1,6 +1,6 @@
 /* 
 
- Copyright 2018 Jethro Kwon (hanlareum@gmail.com), All Rights Reserved.
+ Copyright 2018-2019 Jethro Kwon (hanlareum@gmail.com), All Rights Reserved.
 
 */
 
@@ -117,7 +117,7 @@ long str2long(std::string s, int base);
 
 double str2double(std::string s);
 
-void intro(std::string pname);
+void intro(const char* pname);
 
 } /*jethro*/
 

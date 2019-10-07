@@ -1,6 +1,6 @@
 /* 
 
- Copyright 2018 Jethro Kwon (hanlareum@gmail.com), All Rights Reserved.
+ Copyright 2018-2019 Jethro Kwon (hanlareum@gmail.com), All Rights Reserved.
 
 */
 
@@ -31,7 +31,7 @@ std::shared_ptr<ScriptExecutor> ScriptExecutor::create(std::string path, std::sh
 }
 
 ScriptExecutor::ScriptExecutor(std::string path, std::shared_ptr<LinuxInputWriter> inputWriter) 
-	: m_interval{0.5}, m_restInterval{0}, m_loopCount{1}, m_path{path}, m_inputWriter{inputWriter} {
+	: m_interval{0.0}, m_restInterval{0}, m_loopCount{1}, m_path{path}, m_inputWriter{inputWriter} {
 }
 
 bool ScriptExecutor::initialize() {
@@ -40,7 +40,7 @@ bool ScriptExecutor::initialize() {
 		error("fail to open execute queue -> %s", m_path.c_str());
 		return false;
 	}
-	info("%s>> loading...%s", jethro::color::White.c_str(), jethro::color::Reset.c_str());
+	info("%s>> Loading...%s", jethro::color::White.c_str(), jethro::color::Reset.c_str());
 	for (std::string line; std::getline(ifs, line);) {
 		if (line.empty()) {
 			continue;
@@ -112,12 +112,14 @@ void ScriptExecutor::run() {
 				command += second;
 				command += ")";
 				::system(command.c_str());
-				usleep(m_interval * 1000 * 1000);
+				usleep((m_interval > 0 ? m_interval : 0.5) * 1000 * 1000);
 			} else {
 				if (m_inputWriter != nullptr) {
-					m_inputWriter->exec(name);
+					m_inputWriter->exec(name, second);
 				}
-				usleep(m_interval * 1000 * 1000);
+				if (m_interval > 0) {
+					usleep(m_interval * 1000 * 1000);
+				}
 			}
 		}
 		auto end = chrono::steady_clock::now();

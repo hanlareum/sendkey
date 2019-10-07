@@ -1,6 +1,6 @@
 /* 
 
- Copyright 2018 Jethro Kwon (hanlareum@gmail.com), All Rights Reserved.
+ Copyright 2018-2019 Jethro Kwon (hanlareum@gmail.com), All Rights Reserved.
 
 */
 
@@ -16,10 +16,9 @@ int main(int argc, char* argv[])
 {
 	jethro::intro(argv[0]);
 
-	if (argc < 2) {
-		info("\n[ERROR] script file is not set!!\n");
-		info("\nUsage : %s ${SCRIPT_NAME}\n", argv[0]);
-		return -1;
+	char *filename = (char *) "script.txt";
+	if (argc > 1) {
+		filename = argv[1];
 	}
 
 	auto db = jethro::Database::create("db.dat");
@@ -39,13 +38,15 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 
-	auto script = jethro::ScriptExecutor::create(argv[1], sender);
+	usleep(100 * 1000);
+
+	auto script = jethro::ScriptExecutor::create(filename, sender);
 	if (script == nullptr) {
 		error("Fail to create ScriptExecutor");
 		return -1;
 	}
 
-	info("%s>> Press any key to start sendkey.%s", jethro::color::LightPurple.c_str(), jethro::color::Reset.c_str());
+	info("%s>> Press any key to start sendkey - (%s) %s", jethro::color::LightPurple.c_str(), filename, jethro::color::Reset.c_str());
 	getchar();
 
 	script->run();
