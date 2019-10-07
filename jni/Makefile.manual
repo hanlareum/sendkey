@@ -1,0 +1,84 @@
+#
+# Copyright 2018 Jethro (hanlareum@gmail.com), All Rights Reserved.
+#
+# CROSS	?=/opt/toolchains/stbgcc-4.8-1.6/bin/arm-linux-gnueabihf-
+
+LD		:=$(CROSS)ld
+CXX		:=$(CROSS)g++
+AR		:=$(CROSS)ar
+
+CFLAGS	:=-std=c++11 -g -fstack-protector-all -fPIC -I. -DCONSILE_TEST_MODE
+LDFLAGS	:=-pthread
+
+APPS	:=sendkey eventconsole inspector
+
+LIBTYPE	?=static
+ifeq ($(LIBTYPE),static)
+LIBNAME	:=libvkey.a
+else ifeq ($(LIBTYPE),shared)
+LIBNAME	:=libvkey.so
+else
+$(error wrong LIBTYPE[$(LIBTYPE)])
+endif
+LIBSRCS	:=\
+	Queue.cpp \
+	Util.cpp \
+	Database.cpp \
+	LinuxEvent.cpp \
+	LinuxInput.cpp \
+	LinuxInputWriter.cpp \
+	ScriptExecutor.cpp \
+	Console.cpp
+
+LIBOBJS	:=$(LIBSRCS:.cpp=.o)
+
+OUTSDIR	:=.lib
+
+%.o:%.cpp
+	@ mkdir -p $(OUTSDIR)/$(dir $@)
+	$(CXX) -c $(CFLAGS) -o $(OUTSDIR)/$@ $<
+
+.PHONY:all clean help $(LIBNAME)
+
+all:$(LIBNAME)
+	@ for APP in $(APPS); do \
+		echo "$(CXX) $(CFLAGS) -o $(OUTSDIR)/$$APP example/$$APP.cpp -L$(OUTSDIR) -lvkey $(LDFLAGS)"; \
+		$(CXX) $(CFLAGS) -o $(OUTSDIR)/$$APP example/$$APP.cpp -L$(OUTSDIR) -lvkey $(LDFLAGS) || exit 1; \
+	done
+
+ifeq ($(LIBTYPE),static)
+$(LIBNAME):$(LIBOBJS)
+	$(AR) cru $(OUTSDIR)/$@ $(addprefix  $(OUTSDIR)/,$(LIBOBJS))
+else ifeq ($(LIBTYPE),shared)
+$(LIBNAME):$(LIBOBJS)
+	$(CXX) -shared -o $(OUTSDIR)/$@ $(addprefix  $(OUTSDIR)/,$(LIBOBJS)) $(LDFLAGS)
+endif
+
+clean:
+	rm -Rf $(OUTSDIR) $(LIBOBJS)
+
+help:
+	@ echo -e ""
+	@ echo -e "$$ make clean all"
+	@ echo -e "$$ scp sendkey root@192.168.102.100:/home/root/"
+	@ echo -e ""
+	@ echo -e "# ./sendkey script.dat"
+	@ echo -e ""
+	@ echo -e "[SCRIPT OPTION]"
+	@ echo -e "  LOOP ${N}"
+	@ echo -e "    -> this is loop count config."
+	@ echo -e "       if not set, default value is 1"
+	@ echo -e ""
+	@ echo -e "    -> 0 : infinite loop"
+	@ echo -e "    -> N : N loop"
+	@ echo -e ""
+	@ echo -e "  INTERVAL ${N}"
+	@ echo -e "    -> this is key speed config."
+	@ echo -e "       if not set, default value is 0.5"
+	@ echo -e ""
+	@ echo -e "  SLEEP ${N}"
+	@ echo -e "    -> this is sleep time (sec)"
+	@ echo -e ""
+	@ echo -e "  KEY_${S}"
+	@ echo -e "    -> this is key value."
+	@ echo -e ""

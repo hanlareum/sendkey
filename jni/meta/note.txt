@@ -1,0 +1,44 @@
+1. SENDKEY
+
+	## DESCRIPTION
+	SCRIPT에 정의된 시나리오로 STB에 INPUT 이벤트를 발생시키는 툴로 HEADER와 SCENARIO로 구성됨.
+
+	## HEADER
+	-----------------------
+	LOOP 	   N	: SCENARIO 시나리오 반복 횟수. [DEFAULT = 0 (무한반복)]
+	REST 	   N	: SCENARIO 수행 후 휴게시간. [DEFAULT = 0초]
+	INTERVAL   N	: SCENARIO의 각 ITEM 사이의 휴게시간.  [DEFAULT = 0.5초]
+
+	## SCENARIO
+	-----------------------
+	SLEEP 	   N 	: N초 만큼 SLEEP을 수행. (단위 : 초)
+	WAIT			: ENTER키 입력을 받을때까지 대기.
+	KILL	   NAME	: 특정 프로세스(NAME)에 SIGINT 시그널을 전송.
+	KEY_*			: 키 이벤트 (모든 키 이름은 keys.txt 혹은 meta/db.dat 에서 확인 가능.)
+
+	## HOW TO RUN?
+	-----------------------
+	./sendkey {SCRIPT_FILE_NAME}
+
+
+2. INSPECT
+
+	## DESCRIPTION
+	RCU로 부터 받은 키코드 및 키명을 확인하는 툴.
+
+	## HOW TO RUN?
+	-----------------------
+	./inspector  DEVICE_NAME ( ex: /dev/input/event1 )
+
+
+3. EVENTCONSOLE
+
+	## DESCRIPTION
+	실시간으로 키이벤트를 발생시키는 툴.
+
+	## HOW TO RUN?
+	-----------------------
+	./eventconsole 로 실행 후 키명을 입력.
+		KEY$ down
+		KEY$ up
+		KEY$ left
