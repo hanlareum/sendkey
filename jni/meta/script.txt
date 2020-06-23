@@ -1,0 +1,8 @@
+LOOP 0
+KEY_CHANNELUP 1
+KEY_CHANNELUP 0
+SLEEP 5
+KEY_ENTER 1
+KEY_ENTER 0
+SLEEP 2
+SCRIPT top -n 1 -p $(pidof taurusserver)

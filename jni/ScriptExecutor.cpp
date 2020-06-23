@@ -1,6 +1,6 @@
-/* 
+/*
 
- Copyright 2018-2019 Jethro Kwon (hanlareum@gmail.com), All Rights Reserved.
+ Copyright 2018-2020 Jethro Kwon (hanlareum@gmail.com), All Rights Reserved.
 
 */
 
@@ -30,7 +30,7 @@ std::shared_ptr<ScriptExecutor> ScriptExecutor::create(std::string path, std::sh
 	return nullptr;
 }
 
-ScriptExecutor::ScriptExecutor(std::string path, std::shared_ptr<LinuxInputWriter> inputWriter) 
+ScriptExecutor::ScriptExecutor(std::string path, std::shared_ptr<LinuxInputWriter> inputWriter)
 	: m_interval{0.0}, m_restInterval{0}, m_loopCount{1}, m_path{path}, m_inputWriter{inputWriter} {
 }
 
@@ -45,48 +45,50 @@ bool ScriptExecutor::initialize() {
 		if (line.empty()) {
 			continue;
 		}
-		std::vector<std::string> data;
-		int count = jethro::split(line, ' ', data);
 
-		std::string first = data[0];
-		std::string second = (count == 1) ? "" : data[1];
-		jethro::uppercase(first);
-		//debug("count : %d, data[0] : %s", count, data[0].c_str());
+        std::size_t found = std::string::npos;
+        if (jethro::startswith(line, "KEY_")
+                || jethro::startswith(line, "SCRIPT")
+                || jethro::startswith(line, "LOOP")
+                || jethro::startswith(line, "SLEEP")) {
+            found = line.find(" ");
+        }
+        else {
+            error("unknown event -> %s", line.c_str());
+            continue;
+        }
 
-		if (count == 2) {
-			info("    -> %s (%s)", first.c_str(), second.c_str());
-		} else {
-			info("    -> %s", first.c_str());
-		}
+        std::string first, second;
+        if (found != std::string::npos) {
+            first = line.substr(0, found);
+            second = line.substr(found + 1, line.length() - found);
+        }
+        else {
+            first = line;
+        }
 
-		if (first == "INTERVAL") {
-			if (count == 2) {
-				m_interval = jethro::str2double(second);
-			} else {
-				error("INTERVAL can't set!!");
-			}
-		} else if (first == "REST") {
-			if (count == 2) {
-				m_restInterval = jethro::str2double(second);
-			} else {
-				error("REST can't set!!");
-			}
-		} else if (first == "LOOP") {
-			if (count == 2) {
-				m_loopCount = jethro::str2long(second, 10);
-				if (m_loopCount < 0) {
-					m_loopCount = 1;
-				}
-			} else {
-				error("LOOP can't set!!");
-			}
-		} else if (jethro::startswith(first, "KEY_") || first == "SLEEP" || first == "WAIT" || first == "KILL") {
-			push(first, second);
-		} else {
-			error("unknown event -> %s", first.c_str());
-		}
+        jethro::uppercase(first);
+
+        if (second == "") {
+            info("    -> %s", first.c_str());
+        }
+        else {
+            info("    -> %s (%s)", first.c_str(), second.c_str());
+        }
+
+        if (first == "LOOP") {
+            if (second != "") {
+                m_loopCount = jethro::str2long(second, 10);
+            }
+            if (m_loopCount < 0) {
+                m_loopCount = 1;
+            }
+        }
+        else {
+            push(first, second);
+        }
 	}
-	return true;	
+	return true;
 }
 
 void ScriptExecutor::run() {
@@ -105,12 +107,8 @@ void ScriptExecutor::run() {
 
 			if (name == "SLEEP") {
 				usleep(jethro::str2long(second, 10) * 1000 * 1000);
-			} else if (name == "WAIT") {
-				getchar();
-			} else if (name == "KILL") {
-				std::string command = "kill $(pidof ";
-				command += second;
-				command += ")";
+			} else if (name == "SCRIPT") {
+				std::string command = second;
 				::system(command.c_str());
 				usleep((m_interval > 0 ? m_interval : 0.5) * 1000 * 1000);
 			} else {
@@ -138,7 +136,15 @@ void ScriptExecutor::run() {
 			min = sec / 60;
 			sec = sec % 60;
 		}
-		info("%s    -> %u/%02u:%02u:%02u elapsed.%s", jethro::color::Brown.c_str(), day, hour, min, sec, jethro::color::Reset.c_str());
+		info("%s    -> %u/%02u:%02u:%02u [%s] elapsed.%s"
+            , jethro::color::Brown.c_str()
+            , day
+            , hour
+            , min
+            , sec
+            , jethro::getTimeNow("%Y.%m.%d %X").c_str()
+            , jethro::color::Reset.c_str());
+
 		if (m_restInterval > 0) {
 			usleep(m_restInterval * 1000 * 1000);
 		}

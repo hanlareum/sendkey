@@ -1,12 +1,17 @@
-/* 
+/*
 
- Copyright 2018-2019 Jethro Kwon (hanlareum@gmail.com), All Rights Reserved.
+ Copyright 2018-2020 Jethro Kwon (hanlareum@gmail.com), All Rights Reserved.
 
 */
 
 #include <iostream>
 #include <sstream>
 #include <algorithm>
+
+#include <chrono>  // chrono::system_clock
+#include <ctime>   // localtime
+#include <iomanip> // put_time
+#include <string>  // string
 
 #include <unistd.h>
 #include <string.h>
@@ -62,6 +67,15 @@ bool startswith(std::string a, std::string b) {
 void intro(const char* pname) {
 	prompt("%s%s v%.1f (%s, %s)%s\n", jethro::color::White.c_str(), basename(pname), VERSION, AUTHOR, EMAIL, jethro::color::Reset.c_str());
 	usleep(100 * 1000);
+}
+
+std::string getTimeNow(std::string format) {
+    auto now = std::chrono::system_clock::now();
+    auto in_time_t = std::chrono::system_clock::to_time_t(now);
+
+    std::stringstream ss;
+    ss << std::put_time(std::localtime(&in_time_t), format.c_str());
+    return ss.str();
 }
 
 } /*jethro*/

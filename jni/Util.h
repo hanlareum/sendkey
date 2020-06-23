@@ -1,6 +1,6 @@
-/* 
+/*
 
- Copyright 2018-2019 Jethro Kwon (hanlareum@gmail.com), All Rights Reserved.
+ Copyright 2018-2020 Jethro Kwon (hanlareum@gmail.com), All Rights Reserved.
 
 */
 
@@ -65,7 +65,7 @@ inline std::string string_sprintf(const char* fmt, ...){
 
 #ifdef SUPPORT_DEBUG_LOG_ERROR
 #define error(...) do { \
-	std::cerr << jethro::color::Red << "[E] " << jethro::string_sprintf(__VA_ARGS__) << " (" << __FUNCTION__ << "::" << __LINE__ << ")" << jethro::color::Reset << std::endl; \
+	std::cout << jethro::color::Red << "[E] " << jethro::string_sprintf(__VA_ARGS__) << " (" << __FUNCTION__ << "::" << __LINE__ << ")" << jethro::color::Reset << std::endl; \
 } while(0);
 #else
 #define error(...) do {} while(0);
@@ -73,7 +73,7 @@ inline std::string string_sprintf(const char* fmt, ...){
 
 #ifdef SUPPORT_DEBUG_LOG_WARN
 #define warn(...) do { \
-	std::cerr << jethro::color::Yellow << "[W] " << jethro::string_sprintf(__VA_ARGS__) << " (" << __FUNCTION__ << "::" << __LINE__ << ")" << jethro::color::Reset << std::endl; \
+	std::cout << jethro::color::Yellow << "[W] " << jethro::string_sprintf(__VA_ARGS__) << " (" << __FUNCTION__ << "::" << __LINE__ << ")" << jethro::color::Reset << std::endl; \
 } while(0);
 #else
 #define warn(...) do {} while(0);
@@ -118,6 +118,8 @@ long str2long(std::string s, int base);
 double str2double(std::string s);
 
 void intro(const char* pname);
+
+std::string getTimeNow(std::string format = "%Y%m%d_%H%M%S");
 
 } /*jethro*/
 

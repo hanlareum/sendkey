@@ -1,6 +1,6 @@
-/* 
+/*
 
- Copyright 2018-2019 Jethro Kwon (hanlareum@gmail.com), All Rights Reserved.
+ Copyright 2018-2020 Jethro Kwon (hanlareum@gmail.com), All Rights Reserved.
 
 */
 
@@ -37,7 +37,7 @@ LinuxInputWriter::~LinuxInputWriter() {
 bool LinuxInputWriter::initialize() {
 	m_running = true;
 	m_thread = std::thread(&LinuxInputWriter::mainloop, this);
-	return true;	
+	return true;
 }
 
 void LinuxInputWriter::mainloop() {
@@ -75,7 +75,10 @@ void LinuxInputWriter::exec(std::string name, std::string code) {
 }
 
 void LinuxInputWriter::exec(std::pair<std::string, std::string> key) {
-	push(key);
+    {
+        std::unique_lock<std::mutex> lock(m_mutex);
+        push(key);
+    }
 	m_condvar.notify_one();
 }
 

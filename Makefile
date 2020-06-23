@@ -1,13 +1,13 @@
 #
 #
-#  Copyright 2018-2019 Jethro Kwon (hanlareum@gmail.com), All Rights Reserved.
+#  Copyright 2018-2020 Jethro Kwon (hanlareum@gmail.com), All Rights Reserved.
 #
 #
 
-NDK_PATH?=/Users/oskwon/Desktop/Alticast/android-ndk-r18b
+NDK_PATH?=/Users/os.kwon/Library/Android/sdk/ndk/21.0.6113669
 
 APP_NAME?=sendkey
-APP_VERSION:=1.6
+APP_VERSION:=2.0
 
 include jni/Application.mk
 
