@@ -40,7 +40,7 @@ bool ScriptExecutor::initialize() {
 		error("fail to open execute queue -> %s", m_path.c_str());
 		return false;
 	}
-	info("%s>> Loading...%s", jethro::color::White.c_str(), jethro::color::Reset.c_str());
+	prompt("%s>> Loading...%s\n", jethro::color::White.c_str(), jethro::color::Reset.c_str());
 	for (std::string line; std::getline(ifs, line);) {
 		if (line.empty()) {
 			continue;
@@ -70,10 +70,10 @@ bool ScriptExecutor::initialize() {
         jethro::uppercase(first);
 
         if (second == "") {
-            info("    -> %s", first.c_str());
+            prompt("    -> %s\n", first.c_str());
         }
         else {
-            info("    -> %s (%s)", first.c_str(), second.c_str());
+            prompt("    -> %s (%s)\n", first.c_str(), second.c_str());
         }
 
         if (first == "LOOP") {
@@ -109,7 +109,7 @@ void ScriptExecutor::run() {
 				usleep(jethro::str2long(second, 10) * 1000 * 1000);
 			} else if (name == "SCRIPT") {
 				std::string command = second;
-				::system(command.c_str());
+				execute(command.c_str());
 				usleep((m_interval > 0 ? m_interval : 0.5) * 1000 * 1000);
 			} else {
 				if (m_inputWriter != nullptr) {

@@ -7,7 +7,7 @@
 NDK_PATH?=/Users/os.kwon/Library/Android/sdk/ndk/21.0.6113669
 
 APP_NAME?=sendkey
-APP_VERSION:=2.0
+APP_VERSION:=2.1
 
 include jni/Application.mk
 

@@ -78,4 +78,21 @@ std::string getTimeNow(std::string format) {
     return ss.str();
 }
 
+bool execute(const char* cmd) {
+    char buffer[1024] = {0};
+
+    FILE* p = ::popen(cmd, "r");
+    if (!p) {
+        return false;
+    }
+
+    while (::fgets(buffer, 1024, p) != NULL) {
+        info2("%s", buffer);
+    }
+
+    ::pclose(p);
+
+    return true;
+}
+
 } /*jethro*/

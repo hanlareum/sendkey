@@ -16,12 +16,13 @@ LOCAL_SRC_FILES := \
 	Database.cpp \
 	Queue.cpp \
 	Util.cpp \
-	Console.cpp
+	Console.cpp \
+	Logger.cpp
 
 LOCAL_SRC_FILES += \
 	example/$(APPNAME).cpp
 
-LOCAL_CFLAGS += -std=c++11 -g -fstack-protector-all -fPIC -pthread -DVERSION=$(VERSION)
+LOCAL_CFLAGS += -std=c++0x -g -fstack-protector-all -fPIC -pthread -DVERSION=$(VERSION)
 LOCAL_C_INCLUDES += $(LOCAL_PATH)
 
 LOCAL_MODULE_TAGS := optional

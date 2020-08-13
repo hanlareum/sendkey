@@ -25,11 +25,12 @@ typedef enum {
 
 int doing_help(const char* pn);
 int doing_inspect(const char* pn, const char* filename);
-int doing_sendkey(const char* pn, const char* filename);
+int doing_sendkey(const char* pn, const char* filename, const int autostart);
 
 int main(int argc, char* argv[])
 {
     int opt = -1;
+    int autostart = 0;
     char filename[256] = {0,};
     std::string pn = argv[0];
 
@@ -37,7 +38,9 @@ int main(int argc, char* argv[])
 
     sprintf(filename, "script.txt");
 
-    while ((opt = getopt(argc, argv, "hri:")) != -1) {
+    jethro::Logger::getInstance()->open(NULL);
+
+    while ((opt = getopt(argc, argv, "hri:f:a")) != -1) {
         switch (opt) {
             case 'h':
                 return doing_help(pn.c_str());
@@ -47,6 +50,12 @@ int main(int argc, char* argv[])
             case 'i':
                 sprintf(filename, "%s", optarg);
                 break;
+            case 'a':
+                autostart = 1;
+                break;
+            case 'f':
+                jethro::Logger::getInstance()->open(optarg);
+                break;
         }
     }
 
@@ -54,12 +63,12 @@ int main(int argc, char* argv[])
         return doing_inspect(pn.c_str(), filename);
     }
     else if (runmode == RUNMODE_SENDKEY) {
-        return doing_sendkey(pn.c_str(), filename);
+        return doing_sendkey(pn.c_str(), filename, autostart);
     }
     return -1;
 }
 
-int doing_sendkey(const char* pn, const char* filename)
+int doing_sendkey(const char* pn, const char* filename, const int autostart)
 {
     jethro::intro(pn);
 
@@ -88,8 +97,13 @@ int doing_sendkey(const char* pn, const char* filename)
         return -1;
     }
 
-    info("%s>> Press any key to start sendkey - (%s) %s", jethro::color::LightPurple.c_str(), filename, jethro::color::Reset.c_str());
-    getchar();
+    if (autostart == 0) {
+        prompt("%s>> Press any key to start sendkey - (%s) %s\n", jethro::color::LightPurple.c_str(), filename, jethro::color::Reset.c_str());
+        getchar();
+    }
+    else {
+        prompt("%s>> Start sendkey - (%s) %s\n", jethro::color::LightPurple.c_str(), filename, jethro::color::Reset.c_str());
+    }
 
     script->run();
 
@@ -162,16 +176,19 @@ int doing_inspect(const char* pn, const char* filename)
 int doing_help(const char* pn)
 {
     jethro::intro(pn);
-    info("");
-    info("Usage : %s [OPTIONS]", pn);
-    info("  -h          print usage.");
-    info("  -r          inspect mode");
-    info("  -i [FILE]   path of script or event device");
-    info("");
-    info("Examples :");
-    info("  %s -r -i /dev/input/event1", pn);
-    info("  %s -i /data/script.txt", pn);
-    info("  %s", pn);
-    info("");
+    prompt("\n");
+    prompt("Usage : %s [OPTIONS]\n", pn);
+    prompt("  -h          print usage.\n");
+    prompt("  -r          inspect mode\n");
+    prompt("  -a          auto start.\n");
+    prompt("  -i [FILE]   path of script or event device\n");
+    prompt("  -f [FILE]   log file\n");
+    prompt("\n");
+    prompt("Examples :\n");
+    prompt("  %s -r -i /dev/input/event1\n", pn);
+    prompt("  %s -i /data/script.txt\n", pn);
+    prompt("  %s -f sendkey.log\n", pn);
+    prompt("  %s\n", pn);
+    prompt("\n");
     return 0;
 }

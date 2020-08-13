@@ -1,4 +1,4 @@
-/* 
+/*
 
  Copyright 2018-2019 Jethro Kwon (hanlareum@gmail.com), All Rights Reserved.
 
@@ -31,6 +31,8 @@ int main(int argc, char *argv[])
 	if (argc > 2) {
 		dbPath = argv[1];
 	}
+
+    jethro::Logger::getInstance()->open(NULL);
 
 #ifndef CONSILE_TEST_MODE
 	auto db = jethro::Database::create(dbPath);
@@ -68,7 +70,7 @@ int main(int argc, char *argv[])
 #ifndef CONSILE_TEST_MODE
 			device->emitKey(input);
 #else
-			cout << input << endl;			
+			cout << input << endl;
 #endif
 		}
 	}
