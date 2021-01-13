@@ -113,7 +113,15 @@ void ScriptExecutor::run() {
 				usleep((m_interval > 0 ? m_interval : 0.5) * 1000 * 1000);
 			} else {
 				if (m_inputWriter != nullptr) {
-					m_inputWriter->exec(name, second);
+                    if (second == "") {
+                        m_inputWriter->exec(name, std::string("1"));
+                        if (m_interval > 0) {
+                            usleep(m_interval * 1000 * 1000);
+                        }
+                        m_inputWriter->exec(name, std::string("0"));
+                    } else {
+                        m_inputWriter->exec(name, second);
+                    }
 				}
 				if (m_interval > 0) {
 					usleep(m_interval * 1000 * 1000);
